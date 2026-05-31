@@ -46,6 +46,7 @@ def call(Map config = [:]) {
                             playbook: "${codeBasePath}/grafana.yml",
                             inventory: "${codeBasePath}/hosts.ini",
                             colorized: true,
+                            disableHostKeyChecking: true
                             extraVars: [
                                 env_target: environment
                             ]
