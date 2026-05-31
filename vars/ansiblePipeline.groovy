@@ -41,16 +41,19 @@ def call(Map config = [:]) {
                     script {
                         echo "Executing Ansible playbook for Grafana [Environment: ${environment}]..."
                         
-                        // Dynamically runs your specific Grafana setup using the provided path
-                        ansiblePlaybook(
-                            playbook: "${codeBasePath}/grafana.yml",
-                            inventory: "${codeBasePath}/hosts.ini",
-                            colorized: true,
-                            disableHostKeyChecking: true
-                            extraVars: [
-                                env_target: environment
-                            ]
-                        )
+                        // We wrap this in a dir() block so Ansible runs *inside* your target environment folder.
+                        // This guarantees it discovers the 'roles' subfolder automatically.
+                        dir("${codeBasePath}") {
+                            ansiblePlaybook(
+                                playbook: "grafana.yml",
+                                inventory: "hosts.ini",
+                                colorized: true,
+                                disableHostKeyChecking: true,
+                                extraVars: [
+                                    env_target: environment
+                                ]
+                            )
+                        }
                     }
                 }
             }
@@ -66,4 +69,4 @@ def call(Map config = [:]) {
             }
         }
     }
-}
+} 
